@@ -1,0 +1,13 @@
+{
+  "name": "eRacun",
+  "description": "Seja, nakupovalna košarica, XML in e-SLOG",
+  "author": "Dejan Lavbič <Dejan@lavbic.net>",
+  "dependencies": {
+    "express": "latest",
+    "express-session":"latest",
+    "sqlite3": "latest",
+    "ejs": "latest",
+    "formidable": "latest",
+    "util": "latest"
+  }
+}
