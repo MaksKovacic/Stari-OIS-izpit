@@ -47,6 +47,16 @@ function davcnaStopnja(izvajalec, zanr) {
 
 
 // TODO: Tukaj je potrebna implementacija 1. PU (Preverjanje ali stranka že obstaja)
+streznik.get('/strankaObstajaPosta/:eposta', function(zahteva, odgovor) {
+  console.log(zahteva.params.eposta)
+  vrniSteviloStrank(zahteva.params.eposta, function(napaka, vrstice) {
+    if(vrstice.length>0)
+      odgovor.send({"obstaja":true});
+    else
+      odgovor.send({"obstaja":false});
+  })
+})
+
 
 
 function vrniSteviloStrank(eposta, callback) {
@@ -279,32 +289,42 @@ streznik.post('/prijava', function(zahteva, odgovor) {
     // TODO: Tukaj je potrebna implementacija 2. PU
     //       (PU2.3 Preverjanje ali je stranka že registrirana)
     var napaka2 = false;
-    try {
-    var stmt = pb.prepare("\
-      INSERT INTO Customer \
-  	  (FirstName, LastName, Company, \
-  	  Address, City, State, Country, PostalCode, \
-  	  Phone, Fax, Email, SupportRepId) \
-      VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
-    stmt.run(
-      polja["FirstName"], polja["LastName"], polja["Company"],
-	    polja["Address"], polja["City"], polja["State"], 
-	    polja["Country"], polja["PostalCode"],
-	    polja["Phone"], polja["Fax"], polja["Email"], 3); 
-    stmt.finalize();
-    } catch (err) {
-      napaka2 = true;
-    }
-  
-    vrniStranke(function(napaka3, stranke) {
-      vrniRacune(function(napaka4, racuni) {
-        var sporocilo = "Stranka je bila uspešno registrirana!";
-        if (napaka1 || napaka2 || napaka3 || napaka4) {
-          sporocilo = "Prišlo je do napake pri registraciji nove stranke. Prosim preverite vnešene podatke in poskusite znova.";
-        }
-        odgovor.render('prijava', {sporocilo: sporocilo, seznamStrank: stranke, seznamRacunov: racuni});  
-      }) 
-    });
+    
+    strankaObstajaObvezniAtributi(
+      polja["FirstName"], polja["LastName"], polja["Address"], polja["City"],
+      polja["Country"], polja["PostalCode"], polja["Email"], function(napakaObstaja){
+
+      if(!napakaObstaja) {
+          try {
+          var stmt = pb.prepare("\
+            INSERT INTO Customer \
+        	  (FirstName, LastName, Company, \
+        	  Address, City, State, Country, PostalCode, \
+        	  Phone, Fax, Email, SupportRepId) \
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?)");
+          stmt.run(
+            polja["FirstName"], polja["LastName"], polja["Company"],
+      	    polja["Address"], polja["City"], polja["State"], 
+      	    polja["Country"], polja["PostalCode"],
+      	    polja["Phone"], polja["Fax"], polja["Email"], 3); 
+          stmt.finalize();
+          } catch (err) {
+            napaka2 = true;
+          }
+      }
+        vrniStranke(function(napaka3, stranke) {
+          vrniRacune(function(napaka4, racuni) {
+            var sporocilo = "Stranka je bila uspešno registrirana!";
+            if(napakaObstaja) {
+              sporocilo = "Stranka že obstaja, zato je ne moremo dodati!"
+            }
+            else if (napaka1 || napaka2 || napaka3 || napaka4) {
+              sporocilo = "Prišlo je do napake pri registraciji nove stranke. Prosim preverite vnešene podatke in poskusite znova.";
+            }
+            odgovor.render('prijava', {sporocilo: sporocilo, seznamStrank: stranke, seznamRacunov: racuni});  
+          }) 
+        });
+      });
   });
 })
 

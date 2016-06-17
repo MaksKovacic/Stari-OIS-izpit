@@ -3,11 +3,34 @@
     <meta charset="UTF-8">
     <title>..:: Prodajalna pesmi ::..</title>
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <style>
+        .obvezno {
+            background-color:#f5d6d6;
+        }
+    </style>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
     <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script type="text/javascript">
       function preveriPredPosiljanjemNaStreznik() {
-        return true;
+          if($('#FirstName').val().length>0 &&
+             $('#LastName').val().length>0 &&
+             $('#Company').val().length>0 &&
+             $('#Address').val().length>0 &&
+             $('#City').val().length>0 &&
+             $('#Country').val().length>0 &&
+             $('#PostalCode').val().length>0 &&
+             $('#Email').val().length>0)
+                 if($('#Country').val() == 'Slovenija' || $('#Country').val() == 'Slovenia')
+                     return true;
+                 else {
+                    $('.help-block').text('Stranke lahko prihajajo le iz Slovenije.');
+                    return false;
+                 }
+            else
+            {
+                $('.help-block').text('Prosim vnesite vse vrednosti v obvezna polja!');
+                return false;
+            }
       }
     </script>
   </head>
@@ -21,28 +44,28 @@
           <div id="stranke">
                 <form action="" method="post" enctype="multipart/form-data" onsubmit="return preveriPredPosiljanjemNaStreznik();">
                 <div class="form-group">
-                    <input type="text" class="form-control" id="FirstName" name="FirstName" placeholder="Ime" />
+                    <input type="text" class="form-control obvezno" id="FirstName" name="FirstName" placeholder="Ime" />
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="LastName" name="LastName" placeholder="Priimek" />
+                    <input type="text" class="form-control obvezno" id="LastName" name="LastName" placeholder="Priimek" />
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="Company" name="Company" placeholder="Podjetje" />
+                    <input type="text" class="form-control obvezno" id="Company" name="Company" placeholder="Podjetje" />
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="Address" name="Address" placeholder="Naslov" />
+                    <input type="text" class="form-control obvezno" id="Address" name="Address" placeholder="Naslov" />
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="City" name="City" placeholder="Mesto" />
+                    <input type="text" class="form-control obvezno" id="City" name="City" placeholder="Mesto" />
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control" id="State" name="State" placeholder="Okrožje" />
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="Country" name="Country" placeholder="Država" />
+                    <input type="text" class="form-control obvezno" id="Country" name="Country" placeholder="Država" />
                 </div>
                 <div class="form-group">
-                    <input type="text" class="form-control" id="PostalCode" name="PostalCode" placeholder="Poštna številka" />
+                    <input type="text" class="form-control obvezno" id="PostalCode" name="PostalCode" placeholder="Poštna številka" />
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control" id="Phone" name="Phone" placeholder="Telefon" />
@@ -51,7 +74,7 @@
                     <input type="text" class="form-control" id="Fax" name="Fax" placeholder="Faks" />
                 </div>
                 <div class="form-group">
-                    <input type="email" class="form-control" id="Email" name="Email" placeholder="E-pošta" />
+                    <input type="email" class="form-control obvezno" id="Email" name="Email" placeholder="E-pošta" />
                 </div>
                 <div class="form-group">
                     <p class="help-block"><%= sporocilo %></p>
